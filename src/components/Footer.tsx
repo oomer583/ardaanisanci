@@ -23,8 +23,8 @@ export function Footer({ onOpenAdmin }: FooterProps) {
             <a href="#" className="flex items-center gap-3 group">
               <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/10 shrink-0 transition-transform group-hover:scale-105">
                 <img 
-                  src="https://media.discordapp.net/attachments/1496117674554425434/1496874543279771688/image1_1.jpeg?ex=69eb788d&is=69ea270d&hm=df2f58d2b0f4606b7b8c878970c8429170bf0b4fa9ce5ff54fac78a9d5ba7bae&=&format=webp&width=616&height=821" 
-                  alt="Arda Nişancı" 
+                  src="https://avatars.githubusercontent.com/u/161474776?v=4" 
+                  alt="Portfolio Sahibi" 
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -35,10 +35,9 @@ export function Footer({ onOpenAdmin }: FooterProps) {
               Karmaşıklığı koda dökerek sadeleştiriyoruz.
             </p>
             <div className="flex gap-4">
-              <a href="https://github.com/ardaanisancii" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full border border-white/5 bg-white/5 flex items-center justify-center text-slate-400 hover:bg-brand-primary hover:text-white hover:border-brand-primary transition-all shadow-lg">
+              <a href="https://github.com/oomer583/HTGRS" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full border border-white/5 bg-white/5 flex items-center justify-center text-slate-400 hover:bg-brand-primary hover:text-white hover:border-brand-primary transition-all shadow-lg">
                 <Shield className="w-4 h-4" />
               </a>
-              {/* Other icons could go here */}
             </div>
           </div>
 
@@ -56,9 +55,9 @@ export function Footer({ onOpenAdmin }: FooterProps) {
             <div className="space-y-6">
               <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 font-black">Platformlar</span>
               <ul className="space-y-4">
-                <li><a href="https://github.com/ardaanisancii" target="_blank" rel="noreferrer" className="text-sm text-slate-300 hover:text-white transition-colors flex items-center gap-2 group">GitHub <span className="w-1 h-1 rounded-full bg-brand-primary opacity-0 group-hover:opacity-100 transition-opacity"></span></a></li>
-                <li><a href="https://www.linkedin.com/in/arda-ni%C5%9Fanc%C4%B1-bbb505366/" target="_blank" rel="noreferrer" className="text-sm text-slate-300 hover:text-white transition-colors flex items-center gap-2 group">LinkedIn <span className="w-1 h-1 rounded-full bg-brand-primary opacity-0 group-hover:opacity-100 transition-opacity"></span></a></li>
-                <li><a href="https://wa.me/905522231141" target="_blank" rel="noreferrer" className="text-sm text-slate-300 hover:text-white transition-colors flex items-center gap-2 group">WhatsApp <span className="w-1 h-1 rounded-full bg-brand-primary opacity-0 group-hover:opacity-100 transition-opacity"></span></a></li>
+                <li><a href="https://github.com/oomer583/HTGRS" target="_blank" rel="noreferrer" className="text-sm text-slate-300 hover:text-white transition-colors flex items-center gap-2 group">GitHub <span className="w-1 h-1 rounded-full bg-brand-primary opacity-0 group-hover:opacity-100 transition-opacity"></span></a></li>
+                <li><a href="#" target="_blank" rel="noreferrer" className="text-sm text-slate-300 hover:text-white transition-colors flex items-center gap-2 group">LinkedIn <span className="w-1 h-1 rounded-full bg-brand-primary opacity-0 group-hover:opacity-100 transition-opacity"></span></a></li>
+                <li><a href="#" target="_blank" rel="noreferrer" className="text-sm text-slate-300 hover:text-white transition-colors flex items-center gap-2 group">WhatsApp <span className="w-1 h-1 rounded-full bg-brand-primary opacity-0 group-hover:opacity-100 transition-opacity"></span></a></li>
               </ul>
             </div>
 

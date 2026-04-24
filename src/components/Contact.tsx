@@ -15,9 +15,9 @@ export function Contact() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
             {[
-              { icon: Mail, label: "E-Posta", value: "ardaanisancii@gmail.com", href: "mailto:ardaanisancii@gmail.com" },
-              { icon: Phone, label: "WhatsApp", value: "+90 552 223 11 41", href: "https://wa.me/905522231141" },
-              { icon: Github, label: "GitHub", value: "@ardaanisancii", href: "https://github.com/ardaanisancii" },
+              { icon: Mail, label: "E-Posta", value: "portfolio@example.com", href: "mailto:portfolio@example.com" },
+              { icon: Phone, label: "WhatsApp", value: "+90 555 555 55 55", href: "https://wa.me/905555555555" },
+              { icon: Github, label: "GitHub", value: "@oomer583", href: "https://github.com/oomer583/HTGRS" },
             ].map((item, index) => (
               <a key={index} href={item.href} target="_blank" rel="noreferrer" className="flex items-center gap-4 group cursor-pointer">
                 <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all shadow-lg group-hover:shadow-brand-primary/20">

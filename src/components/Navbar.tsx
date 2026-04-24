@@ -31,7 +31,7 @@ export function Navbar({ onOpenFolder }: NavbarProps) {
         <a href="#" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 shrink-0">
             <img 
-              src="https://media.discordapp.net/attachments/1496117674554425434/1496874543279771688/image1_1.jpeg?ex=69eb788d&is=69ea270d&hm=df2f58d2b0f4606b7b8c878970c8429170bf0b4fa9ce5ff54fac78a9d5ba7bae&=&format=webp&width=616&height=821" 
+              src="https://avatars.githubusercontent.com/u/161474776?v=4" 
               alt="Logo" 
               className="w-full h-full object-cover"
             />

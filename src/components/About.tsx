@@ -13,13 +13,13 @@ export function About() {
         <div className="md:col-span-2 glass-card flex flex-col md:flex-row gap-8 items-center">
           <div className="w-32 h-32 md:w-48 md:h-48 rounded-2xl overflow-hidden shrink-0 border border-white/10">
             <img 
-              src="https://media.discordapp.net/attachments/1496117674554425434/1496874543279771688/image1_1.jpeg?ex=69eb788d&is=69ea270d&hm=df2f58d2b0f4606b7b8c878970c8429170bf0b4fa9ce5ff54fac78a9d5ba7bae&=&format=webp&width=616&height=821" 
+              src="https://avatars.githubusercontent.com/u/161474776?v=4" 
               alt="Profil"
               className="w-full h-full object-cover"
             />
           </div>
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold">Merhaba, Ben Arda Nişancı</h3>
+            <h3 className="text-2xl font-bold">Merhaba, Ben Portfolio Sahibi</h3>
             <p className="text-slate-400 leading-relaxed">
               Yaratıcı bir arka yüz (backend) geliştirici olarak, uygulamaların görünmeyen ancak en kritik parçalarını inşa ediyorum. 
               Veri akışını yöneten, güvenliği sağlayan ve sistemlerin pürüzsüz çalışmasını garanti eden yapılar kuruyorum.

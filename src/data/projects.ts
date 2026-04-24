@@ -16,7 +16,7 @@ export const initialProjects: Project[] = [
     title: "MoreSpace",
     description: "Dijital dünyada fark yaratan, kullanıcı deneyimi odaklı ve teknik mükemmeliyet hedefleyen profesyonel bir portfolyo örneği.",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop",
-    github: "https://github.com/ardaanisancii",
+    github: "https://github.com/oomer583/HTGRS",
     tags: ["React", "Tailwind", "Firebase"],
     order: 0
   }
