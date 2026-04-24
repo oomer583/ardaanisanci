@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { X, Lock, Plus, Trash2, Layout, Image as ImageIcon, Type, AlignLeft, Pencil } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Project } from '../data/projects';
-import { db } from '../lib/firebase';
-import { collection, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
 
 interface AdminModalProps {
   isOpen: boolean;
@@ -142,35 +140,58 @@ export function AdminModal({ isOpen, onClose, existingProjects, setExistingProje
         github: formData.github,
         link: formData.link,
         isExternal: formData.isExternal,
-        updatedAt: serverTimestamp()
+        uid: 'user-admin-1'
       };
 
+      let response;
       if (editingId) {
-        // Direct Firestore update
-        const projectRef = doc(db, 'projects', editingId);
-        await updateDoc(projectRef, projectData);
-        alert('Proje güncellendi!');
+        response = await fetch(`/api/projects/${editingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(projectData)
+        });
       } else {
-        // Direct Firestore add
-        projectData.createdAt = serverTimestamp();
-        projectData.order = existingProjects.length;
-        await addDoc(collection(db, 'projects'), projectData);
-        alert('Proje eklendi!');
+        response = await fetch('/api/projects', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(projectData)
+        });
       }
 
-      setEditingId(null);
-      setFormData({
-        title: '',
-        description: '',
-        image: '',
-        tags: '',
-        github: '',
-        link: '',
-        isExternal: true
-      });
+      const text = await response.text();
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (e) {
+        throw new Error('API JSON döndürmedi: ' + text.substring(0, 50));
+      }
+
+      if (response.ok) {
+        if (editingId) {
+          setExistingProjects(prev => prev.map(p => p.id === editingId ? { ...p, ...projectData, id: editingId } : p));
+          alert('Proje güncellendi!');
+        } else {
+          const newProject = result;
+          setExistingProjects(prev => [newProject, ...prev]);
+          alert('Proje eklendi!');
+        }
+        
+        setEditingId(null);
+        setFormData({
+          title: '',
+          description: '',
+          image: '',
+          tags: '',
+          github: '',
+          link: '',
+          isExternal: true
+        });
+      } else {
+        throw new Error(result.error || result.message || 'İşlem başarısız');
+      }
     } catch (error: any) {
-      console.error('Firestore Error:', error);
-      alert(`Bir hata oluştu: ${error.message || 'Firestore bağlantısı kurulamadı.'}`);
+      console.error('API Error:', error);
+      alert(`Bir hata oluştu: ${error.message || 'Sunucu bağlantısı kurulamadı.'}`);
     } finally {
       setLoading(false);
     }
@@ -194,15 +215,28 @@ export function AdminModal({ isOpen, onClose, existingProjects, setExistingProje
     
     setLoading(true);
     try {
-      // Direct Firestore delete
-      const projectRef = doc(db, 'projects', projectId);
-      await deleteDoc(projectRef);
-      
-      setDeleteConfirmId(null);
-      alert("Başarılı: Proje sistemden silindi.");
+      const response = await fetch(`/api/projects/${projectId}`, {
+        method: 'DELETE'
+      });
+
+      const text = await response.text();
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (e) {
+        throw new Error('API JSON döndürmedi: ' + text.substring(0, 50));
+      }
+
+      if (response.ok && result.success) {
+        setExistingProjects(prev => prev.filter(p => String(p.id) !== String(projectId)));
+        setDeleteConfirmId(null);
+        alert("Başarılı: Proje sistemden silindi.");
+      } else {
+        throw new Error(result.error || result.message || 'Sunucu silme işlemini reddetti.');
+      }
     } catch (error: any) {
-      console.error("FIRESTORE SİLME HATASI:", error);
-      alert(`Silme işlemi başarısız: ${error.message || 'Veritabanına ulaşılamadı.'}`);
+      console.error("SİLME HATASI:", error);
+      alert(`Silme işlemi başarısız: ${error.message || 'Sunucuya ulaşılamadı.'}`);
       setDeleteConfirmId(null);
     } finally {
       setLoading(false);

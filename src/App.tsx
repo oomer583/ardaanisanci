@@ -13,8 +13,6 @@ import { Footer } from './components/Footer';
 import { AnimatedBackground } from './components/AnimatedBackground';
 import { useState, useEffect } from 'react';
 import { initialProjects, Project } from './data/projects';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
-import { db } from './lib/firebase';
 
 import { AdminModal } from './components/AdminModal';
 import { ProjectFolder } from './components/ProjectFolder';
@@ -26,32 +24,34 @@ export default function App() {
   const [isFolderOpen, setIsFolderOpen] = useState(false);
 
   useEffect(() => {
-    // Read from Firestore instead of /api/projects
-    const projectsCol = collection(db, 'projects');
-    const q = query(projectsCol, orderBy('order', 'desc'));
-    
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const fetchedProjects = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Project[];
-      
-      if (fetchedProjects.length === 0) {
-        setProjects(initialProjects);
-      } else {
-        setProjects(fetchedProjects);
-      }
-      setLoading(false);
-    }, (error) => {
-      console.error('Failed to fetch projects from Firestore:', error);
-      // Fallback to localStorage
-      const savedProjects = localStorage.getItem('my_portfolio_projects');
-      if (savedProjects) setProjects(JSON.parse(savedProjects));
-      else setProjects(initialProjects);
-      setLoading(false);
-    });
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch('/api/projects');
+        const text = await response.text();
+        
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          throw new Error('API JSON döndürmedi: ' + text.substring(0, 50));
+        }
 
-    return () => unsubscribe();
+        if (response.ok) {
+          setProjects(data);
+        } else {
+          throw new Error(data.error || data.message || 'Proje listesi alınamadı');
+        }
+      } catch (error) {
+        console.error('Failed to fetch projects:', error);
+        const savedProjects = localStorage.getItem('my_portfolio_projects');
+        if (savedProjects) setProjects(JSON.parse(savedProjects));
+        else setProjects(initialProjects);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
   }, []);
 
   // Sync projects with localStorage - Improved to handle empty state
@@ -66,7 +66,7 @@ export default function App() {
     <div className="min-h-screen bg-brand-bg selection:bg-brand-primary selection:text-white overflow-x-hidden">
       <AnimatedBackground />
       
-      <Navbar onOpenFolder={() => setIsFolderOpen(true)} />
+      <Navbar />
       <main className="relative z-10">
         <Hero />
         <About />

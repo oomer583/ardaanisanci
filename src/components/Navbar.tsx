@@ -1,12 +1,12 @@
 import { motion } from 'motion/react';
-import { Menu, X, Folder } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface NavbarProps {
-  onOpenFolder?: () => void;
+  // Empty props
 }
 
-export function Navbar({ onOpenFolder }: NavbarProps) {
+export function Navbar({}: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -50,15 +50,6 @@ export function Navbar({ onOpenFolder }: NavbarProps) {
               {link.name}
             </a>
           ))}
-          
-          <button 
-            onClick={onOpenFolder}
-            className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/40 border border-slate-700/50 text-slate-400 hover:text-brand-primary hover:border-brand-primary/30 transition-all cursor-pointer"
-            title="Proje Arşivi"
-          >
-            <Folder size={14} className="group-hover:scale-110 transition-transform" />
-            <span className="text-[10px] font-bold uppercase tracking-wider hidden sm:block">Arşiv</span>
-          </button>
         </div>
 
         <a href="#contact" className="hidden sm:block ml-2 px-4 py-1.5 rounded-full bg-white text-brand-bg text-[11px] font-bold hover:bg-brand-primary hover:text-white transition-all">
