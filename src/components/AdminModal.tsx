@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { X, Lock, Plus, Trash2, Layout, Image as ImageIcon, Type, AlignLeft, Pencil } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Project } from '../data/projects';
+import { db } from '../lib/firebase';
+import { collection, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
 
 interface AdminModalProps {
   isOpen: boolean;
@@ -132,38 +134,28 @@ export function AdminModal({ isOpen, onClose, existingProjects, setExistingProje
     try {
       const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
       
-      const projectData = {
-        ...formData,
+      const projectData: any = {
+        title: formData.title,
+        description: formData.description,
+        image: formData.image,
         tags: tagsArray,
-        order: editingId ? undefined : existingProjects.length,
-        uid: 'user-admin-1' // Mocked UID for persistence demo
+        github: formData.github,
+        link: formData.link,
+        isExternal: formData.isExternal,
+        updatedAt: serverTimestamp()
       };
 
       if (editingId) {
-        const response = await fetch(`/api/projects/${editingId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(projectData)
-        });
-        
-        if (response.ok) {
-          setExistingProjects(prev => prev.map(p => 
-            p.id === editingId ? { ...p, ...formData, tags: tagsArray } : p
-          ));
-          alert('Proje dosyada güncellendi!');
-        }
+        // Direct Firestore update
+        const projectRef = doc(db, 'projects', editingId);
+        await updateDoc(projectRef, projectData);
+        alert('Proje güncellendi!');
       } else {
-        const response = await fetch('/api/projects', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(projectData)
-        });
-
-        if (response.ok) {
-          const newProject = await response.json();
-          setExistingProjects(prev => [newProject, ...prev]);
-          alert('Proje dosyaya eklendi!');
-        }
+        // Direct Firestore add
+        projectData.createdAt = serverTimestamp();
+        projectData.order = existingProjects.length;
+        await addDoc(collection(db, 'projects'), projectData);
+        alert('Proje eklendi!');
       }
 
       setEditingId(null);
@@ -177,8 +169,8 @@ export function AdminModal({ isOpen, onClose, existingProjects, setExistingProje
         isExternal: true
       });
     } catch (error: any) {
-      console.error(error);
-      alert(`Bir hata oluştu: ${error.message || 'Bilinmeyen bir hata'}`);
+      console.error('Firestore Error:', error);
+      alert(`Bir hata oluştu: ${error.message || 'Firestore bağlantısı kurulamadı.'}`);
     } finally {
       setLoading(false);
     }
@@ -200,38 +192,17 @@ export function AdminModal({ isOpen, onClose, existingProjects, setExistingProje
       return;
     }
     
-    console.log("--- DOSYA TABANLI SİLME ONAYLANDI ---");
-    console.log("Hedef ID:", projectId);
-
-    const projectToDelete = existingProjects.find(p => String(p.id) === String(projectId)) as any;
-    if (!projectToDelete) {
-      alert("Hata: Proje listede bulunamadı.");
-      setDeleteConfirmId(null);
-      return;
-    }
-
     setLoading(true);
     try {
-      const uid = projectToDelete.uid || projectToDelete.userId || 'user-admin-1';
-      console.log(`Backend'e gidiliyor... UID: ${uid}, ProjectID: ${projectId}`);
+      // Direct Firestore delete
+      const projectRef = doc(db, 'projects', projectId);
+      await deleteDoc(projectRef);
       
-      const response = await fetch(`/api/projects/${uid}/${projectId}`, {
-        method: 'DELETE'
-      });
-
-      const result = await response.json();
-      console.log("Backend Yanıtı:", result);
-
-      if (response.ok && result.success) {
-        setExistingProjects(prev => prev.filter(p => String(p.id) !== String(projectId)));
-        setDeleteConfirmId(null);
-        alert("Başarılı: Proje sistemden silindi.");
-      } else {
-        throw new Error(result.error || result.message || 'Sunucu silme işlemini reddetti.');
-      }
+      setDeleteConfirmId(null);
+      alert("Başarılı: Proje sistemden silindi.");
     } catch (error: any) {
-      console.error("KRİTİK SİLME HATASI:", error);
-      alert(`Silme işlemi başarısız: ${error.message || 'Sunucuya ulaşılamadı.'}\nLütfen sayfayı yenileyip tekrar deneyin.`);
+      console.error("FIRESTORE SİLME HATASI:", error);
+      alert(`Silme işlemi başarısız: ${error.message || 'Veritabanına ulaşılamadı.'}`);
       setDeleteConfirmId(null);
     } finally {
       setLoading(false);
@@ -241,7 +212,7 @@ export function AdminModal({ isOpen, onClose, existingProjects, setExistingProje
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-md">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}

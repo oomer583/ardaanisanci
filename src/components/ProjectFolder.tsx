@@ -104,7 +104,7 @@ export function ProjectFolder({ isOpen, onClose, projects }: ProjectFolderProps)
           {/* Footer status */}
           <div className="p-3 bg-slate-800/20 border-t border-slate-800 text-xs text-slate-500 flex justify-between items-center px-6">
             <span>{projects.length} Öğe</span>
-            <span>Yerel Bellek</span>
+            <span>Bulut Veritabanı</span>
           </div>
         </motion.div>
       </div>

@@ -13,6 +13,8 @@ import { Footer } from './components/Footer';
 import { AnimatedBackground } from './components/AnimatedBackground';
 import { useState, useEffect } from 'react';
 import { initialProjects, Project } from './data/projects';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { db } from './lib/firebase';
 
 import { AdminModal } from './components/AdminModal';
 import { ProjectFolder } from './components/ProjectFolder';
@@ -24,29 +26,32 @@ export default function App() {
   const [isFolderOpen, setIsFolderOpen] = useState(false);
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await fetch('/api/projects');
-        if (response.ok) {
-          const data = await response.json();
-          setProjects(data);
-        } else {
-          // Fallback to localStorage if API fails partially
-          const savedProjects = localStorage.getItem('my_portfolio_projects');
-          if (savedProjects) setProjects(JSON.parse(savedProjects));
-          else setProjects(initialProjects);
-        }
-      } catch (error) {
-        console.error('Failed to fetch projects:', error);
-        const savedProjects = localStorage.getItem('my_portfolio_projects');
-        if (savedProjects) setProjects(JSON.parse(savedProjects));
-        else setProjects(initialProjects);
-      } finally {
-        setLoading(false);
+    // Read from Firestore instead of /api/projects
+    const projectsCol = collection(db, 'projects');
+    const q = query(projectsCol, orderBy('order', 'desc'));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedProjects = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Project[];
+      
+      if (fetchedProjects.length === 0) {
+        setProjects(initialProjects);
+      } else {
+        setProjects(fetchedProjects);
       }
-    };
+      setLoading(false);
+    }, (error) => {
+      console.error('Failed to fetch projects from Firestore:', error);
+      // Fallback to localStorage
+      const savedProjects = localStorage.getItem('my_portfolio_projects');
+      if (savedProjects) setProjects(JSON.parse(savedProjects));
+      else setProjects(initialProjects);
+      setLoading(false);
+    });
 
-    fetchProjects();
+    return () => unsubscribe();
   }, []);
 
   // Sync projects with localStorage - Improved to handle empty state
